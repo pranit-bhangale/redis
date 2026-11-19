@@ -70,6 +70,16 @@
             <artifactId>commons-pool2</artifactId>
         </dependency>
         <dependency>
+            <!-- Brings in Micrometer, so MeterRegistry becomes an injectable bean -->
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <!-- Exports metrics in Prometheus format at /actuator/prometheus -->
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa-test</artifactId>
             <scope>test</scope>
