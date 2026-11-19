@@ -1,5 +1,6 @@
 package com.pranit.inventory.controller;
 
+import com.pranit.inventory.aop.annotation.RateLimit;
 import com.pranit.inventory.dto.RedisCacheEntryResponse;
 import com.pranit.inventory.dto.RedisCacheStatsResponse;
 import com.pranit.inventory.dto.RedisCacheValueResponse;
@@ -27,6 +28,13 @@ public class MonitoringController {
     private final RedisMonitoringService service;
 
     @GetMapping("/keys")
+    @RateLimit(
+            name = "redis-mon-keys",
+            limit = 10,
+            window = 60,
+            cooldown = 30,
+            key = RateLimit.KeyType.IP,
+            failOpen = false)
     public ResponseEntity<PageResponse<String>> getKeys(
             @RequestParam(defaultValue = "0") @Min(0) int page,
             @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size
@@ -48,11 +56,27 @@ public class MonitoringController {
     }
 
     @GetMapping("/ttl")
+    @RateLimit(
+            name = "redis-mon-ttl",
+            limit = 3,
+            window = 10,
+            cooldown = 5,
+            key = RateLimit.KeyType.IP,
+            failOpen = false
+    )
     public ResponseEntity<Long> getTTL(@RequestParam @NotBlank String key) {
         return ResponseEntity.ok(this.service.getCacheTTL(key));
     }
 
     @GetMapping("/stats")
+    @RateLimit(
+            name = "redis-mon-stats",
+            limit = 20,
+            window = 60,
+            cooldown = 30,
+            key = RateLimit.KeyType.IP,
+            failOpen = false
+    )
     public ResponseEntity<List<RedisCacheStatsResponse>> getStats() {
         return ResponseEntity.ok(this.service.getCacheStats());
     }

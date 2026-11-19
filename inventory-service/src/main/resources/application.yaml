@@ -1,6 +1,10 @@
 spring:
   application:
     name: inventory-service
+  # Virtual Thread Configuration
+  threads:
+    virtual:
+      enabled: true
   # Database Configuration
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:inventory}
@@ -44,7 +48,8 @@ spring:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSORD}
-      timeout: 2s
+      timeout: 100ms
+      connect-timeout: 200ms
       ssl:
         enabled: false
       lettuce:
@@ -65,3 +70,13 @@ inventory:
       users: 30m
       products: 1h
       productPages: 1h
+ratelimit:
+  enabled: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name:inventory-service}
